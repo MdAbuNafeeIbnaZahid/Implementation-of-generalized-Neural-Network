@@ -1,6 +1,14 @@
+import definitions
 import numpy as np
 
 
+def getDataSet( pathToFileFromProjectRoot ):
+    pathToFile = definitions.ROOT_DIR + "/" + pathToFileFromProjectRoot
+    openedFile = open(pathToFile, "rb")
+
+    loadedText = np.loadtxt(openedFile, skiprows=0, dtype=str)
+    floatDataSet = loadedText.astype(np.float)
+    return floatDataSet
 
 
 def getNN(trainset, neuronCntList):
@@ -8,6 +16,7 @@ def getNN(trainset, neuronCntList):
     featureCnt = neuronCntList[0]
     outputVectorSize = neuronCntList[-1]
 
+    w = getRandomW(neuronCntList)
 
 
 def getRandomW(neuronCntList):
@@ -22,3 +31,10 @@ def getRandomW(neuronCntList):
         w.append(wr)
 
     return wr
+
+
+
+
+pathToDataFileFromProjectRoot = "data1/data.txt";
+dataSet = getDataSet(pathToFileFromProjectRoot=pathToDataFileFromProjectRoot)
+print( dataSet )
