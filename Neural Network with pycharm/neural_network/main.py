@@ -31,26 +31,27 @@ def getXY( dataSet, featureCnt, outputVecSize ):
     return ret;
 
 
-def getNN(trainset, neuronCntList):
+def getNN(xTrain, yTrain, neuronCntList):
 
     featureCnt = neuronCntList[0]
     outputVectorSize = neuronCntList[-1]
 
     w = getRandomW(neuronCntList)
+    print(w)
 
 
 def getRandomW(neuronCntList):
     w = []
     w.append(None)  # first layer is input layer
                     # So no weight vector is defined for that
-    for i in range(1, neuronCntList.length):
+    for i in range(1, len(neuronCntList) ):
         prevLayerNeuronCnt = neuronCntList[i - 1]
         curLayerNeuronCnt = neuronCntList[i]
 
         wr = np.random.random((curLayerNeuronCnt, prevLayerNeuronCnt))
         w.append(wr)
 
-    return wr
+    return w
 
 
 
@@ -60,5 +61,10 @@ dataSet = getDataSet(pathToFileFromProjectRoot=pathToDataFileFromProjectRoot)
 ret = getXY(dataSet=dataSet, featureCnt=2, outputVecSize=2)
 X = ret['X']
 Y = ret['Y']
-print(X)
-print(Y)
+# print(X)
+# print(Y)
+assert X.shape[0] == Y.shape[0] # Both X and Y should contain same number of examples
+featureCnt = X.shape[1]
+outputVecSize = Y.shape[1]
+
+getNN(xTrain=X, yTrain=Y, neuronCntList=[featureCnt, 5, 4, outputVecSize] )
