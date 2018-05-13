@@ -1,5 +1,7 @@
 import definitions
 import numpy as np
+import copy as cp
+from logistic_func import getF
 
 
 def getDataSet( pathToFileFromProjectRoot ):
@@ -33,6 +35,10 @@ def getXY( dataSet, featureCnt, outputVecSize ):
 
 def getNN(xTrain, yTrain, neuronCntList, learningRate, totalRound):
 
+    layerCnt = len( neuronCntList )
+    print(layerCnt)
+
+
     assert neuronCntList[0]==xTrain.shape[1]
     featureCnt = neuronCntList[0]
 
@@ -42,15 +48,46 @@ def getNN(xTrain, yTrain, neuronCntList, learningRate, totalRound):
     assert xTrain.shape[0]==yTrain.shape[0]
     exampleCnt = xTrain.shape[0]
 
-    w = getRandomW(neuronCntList)
-    print(w)
+    wAr = getW(neuronCntList, np.random.random)
+    print(wAr)
 
     for roundIdx in range(totalRound):
+        errorInThisRound = 0.0
+
+        delW = getW(neuronCntList=neuronCntList, arrayGettingMethod=np.zeros)
+        print( delW )
+
         for exampleIdx in range(exampleCnt):
-            pass
+            curX = xTrain[exampleIdx,:]
+            curY = yTrain[exampleIdx,:]
+
+            vAr = getZigzagged2dArray(neuronCntList, np.zeros)
+            yAr = getZigzagged2dArray(neuronCntList, np.zeros)
+
+            yAr[0] = curX
+            print(" yAr[0] ")
+            print(yAr[0])
 
 
-def getRandomW(neuronCntList):
+            forwardProp(wAr=wAr, yAr=yAr, vAr=vAr)
+            estimatedY = yAr[ -1 ]
+
+            errorForThisExample = distSq(estimatedY, curY)
+            errorInThisRound += errorForThisExample
+
+
+        print("roundIdx")
+        print(roundIdx)
+
+        print("errorInThisRound")
+        print(errorInThisRound)
+
+
+
+
+
+
+def getW(neuronCntList, arrayGettingMethod):
 
     w = []
     w.append(None)  # first layer is input layer
@@ -59,12 +96,48 @@ def getRandomW(neuronCntList):
         prevLayerNeuronCnt = neuronCntList[i - 1]
         curLayerNeuronCnt = neuronCntList[i]
 
-        wr = np.random.random((curLayerNeuronCnt, prevLayerNeuronCnt+1))
+        wr = arrayGettingMethod((curLayerNeuronCnt, prevLayerNeuronCnt+1))
         w.append(wr)
 
     return w
 
 
+def getZigzagged2dArray( columnCntList, arrayGettingMethod ):
+    za = []
+    for i in columnCntList:
+        addee = arrayGettingMethod(i)
+        za.append(addee)
+    return za
+
+
+
+def forwardProp(wAr, yAr, vAr):
+    layerCnt =  len(wAr)
+    for layerIdx in range(1, layerCnt):
+        print("layerIdx")
+        print(layerIdx)
+
+        curLayerW = wAr[layerIdx]
+        print("curLayerW")
+        print(curLayerW)
+
+        prevYWithBias = np.append(1, yAr[layerIdx - 1])
+        print("prevYWithBias")
+        print(prevYWithBias)
+
+        vAr[layerIdx] = np.dot(curLayerW, prevYWithBias)
+        print("vAr[layerIdx]")
+        print(vAr[layerIdx])
+
+        yAr[layerIdx] = getF(x=vAr[layerIdx])
+
+        print("yAr[layerIdx]")
+        print(yAr[layerIdx])
+
+
+def distSq(x, y):
+    assert x.shape == y.shape
+    return np.sum((x-y)**2)
 
 
 pathToDataFileFromProjectRoot = "data1/data.txt";
@@ -78,8 +151,8 @@ assert X.shape[0] == Y.shape[0] # Both X and Y should contain same number of exa
 exampleCnt = X.shape[0]
 
 
-bias = np.ones( (exampleCnt, 1) )
-X = np.append(bias, X, axis=1)
+# bias = np.ones( (exampleCnt, 1) )
+# X = np.append(bias, X, axis=1)
 
 print(X)
 print(Y)
@@ -90,5 +163,6 @@ outputVecSize = Y.shape[1]
 
 neuronCntList=[featureCnt, 5, 4, outputVecSize]
 learningRate = 0.1
-roundCnt = 100
-getNN(xTrain=X, yTrain=Y, neuronCntList=neuronCntList, learningRate=learningRate, totalRound=roundCnt)
+roundCnt = 1
+getNN(xTrain=X, yTrain=Y, neuronCntList=neuronCntList, learningRate=learningRate,
+      totalRound=roundCnt)

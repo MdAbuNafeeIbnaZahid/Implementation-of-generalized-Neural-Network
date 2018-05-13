@@ -1,10 +1,13 @@
 import math
+import numpy as np
 
-def getF(x, a):
-    denominator = 1 + math.e ** (-a * x)
+a = 1
+
+def getF(x):
+    denominator = 1 + np.power( math.e, (-a * x) )
     return 1/denominator;
 
 
 
-def getFPrime(x, a):
+def getFPrime(x):
     return  a * getF(x,a) * (1 - getF(x,a) )
