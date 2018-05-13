@@ -10,6 +10,26 @@ def getDataSet( pathToFileFromProjectRoot ):
     floatDataSet = loadedText.astype(np.float)
     return floatDataSet
 
+def getXY( dataSet, featureCnt, outputVecSize ):
+    # print(dataSet)
+    exampleCnt = dataSet.shape[0]
+
+    X =  dataSet[:, 0:featureCnt ]
+    Y = dataSet[:,-1]
+
+    yVec = np.zeros( (exampleCnt, outputVecSize) )
+    for i in range(exampleCnt):
+        colToMake1 = int(Y[i])-1
+        yVec[ i, colToMake1 ] = 1
+
+    Y = yVec
+
+    ret = {}
+    ret['X'] = X
+    ret['Y'] = Y
+
+    return ret;
+
 
 def getNN(trainset, neuronCntList):
 
@@ -37,4 +57,8 @@ def getRandomW(neuronCntList):
 
 pathToDataFileFromProjectRoot = "data1/data.txt";
 dataSet = getDataSet(pathToFileFromProjectRoot=pathToDataFileFromProjectRoot)
-print( dataSet )
+ret = getXY(dataSet=dataSet, featureCnt=2, outputVecSize=2)
+X = ret['X']
+Y = ret['Y']
+print(X)
+print(Y)
