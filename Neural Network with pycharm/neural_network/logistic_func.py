@@ -10,4 +10,4 @@ def getF(x):
 
 
 def getFPrime(x):
-    return  a * getF(x,a) * (1 - getF(x,a) )
+    return  a * getF(x) * (1 - getF(x) )
